@@ -1,0 +1,8 @@
+digraph finite_state_machine {
+    bgcolor="#00000000";
+	rankdir=LR;
+	size="8,5"
+	node [shape = square, size = 2] v1 v2; 
+    v1 [pos="0,0!"];
+    v2 [pos="2,0!"];
+} 

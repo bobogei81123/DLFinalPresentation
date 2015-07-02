@@ -1,0 +1,260 @@
+<!doctype html>
+<html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+
+    <title>reveal.js - The HTML Presentation Framework</title>
+
+    <meta name="description" content="A framework for easily creating beautiful presentations using HTML">
+    <meta name="author" content="Hakim El Hattab">
+
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+
+    <link rel="stylesheet" href="css/reveal.css">
+    <link rel="stylesheet" href="css/theme/serif.css" id="theme">
+
+    <!-- Code syntax highlighting -->
+    <link rel="stylesheet" href="lib/css/zenburn.css">
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Printing and PDF exports -->
+    <script>
+      var link = document.createElement( 'link' );
+      link.rel = 'stylesheet';
+      link.type = 'text/css';
+      link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+      document.getElementsByTagName( 'head' )[0].appendChild( link );
+    </script>
+
+
+    <!--[if lt IE 9]>
+    <script src="lib/js/html5shiv.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="reveal">
+      <!-- Any section element inside of this container is displayed as a slide -->
+      <div class="slides">
+
+        \( 
+        \newcommand{\ord}[1]{\opord\left(#1\right)}
+        \newcommand{\abs}[1]{\lvert #1 \rvert}
+        \newcommand{\floor}[1]{\lfloor #1 \rfloor}
+        \newcommand{\ceil}[1]{\lceil #1 \rceil}
+        \newcommand{\opord}{\operatorname{\mathcal{O}}}
+        \newcommand{\fail}{\operatorname{\mathcal{F}}}
+        \newcommand{\flk}{\operatorname{\mathfrak{F}}}
+        \newcommand{\suf}{\operatorname{\sigma}}
+        \newcommand{\rank}{\operatorname{\mathcal{R}}}
+        \newcommand{\sa}{\operatorname{\mathcal{SA}}}
+        \newcommand{\hei}{\operatorname{\mathcal{H}}}
+        \newcommand{\edps}{\operatorname{\mathcal{E}}}
+        \newcommand{\mx}{\operatorname{\mathcal{M}}}
+        \newcommand{\argmax}{\operatorname{arg\,max}}
+        \newcommand{\cons}[1]{\left[ \: #1 \: \right]}
+        \newcommand{\str}[1]{\texttt{"#1"}}
+        \)
+
+        <section>
+          <h1> DL - Final </h1>
+          <h2> Team - AlphaNumeric </h1>
+        </section>
+
+        <section>
+          <h2> Flow Chart </h2>
+          <div id="diag">
+            <div class="block"> Input </div> ⟶
+            <div class="block"> DNN </div> ⟶
+            <div class="block"> HMM </div> ⟶ 
+            <div class="block" style="width: 150px" > Word 
+              sequence decoding </div> ⟶
+            <div class="block"> LM </div> ⟶
+            <div class="block"> Output </div> 
+          </div>
+        </section>
+
+        <section>
+          <section>
+            <h2> DNN and HMM </h2>
+            <p> 我們本來想 fine tune HW1 HW2 的 model ， <br> 
+              並且改成 n-best HMM, but...  <p>
+          </section>
+          <section>
+            <p> 好險 Kaggle 有幫我們存檔 </p>
+            <img src="img/1.png"/> 
+          </section>
+        </section>
+
+        <section>
+          <h2> Language Model </h2>
+          <p> We try to use word2vec, but... </p>
+        </section>
+
+        <section>
+          <section>
+            <h2> WFST </h2>
+            <p> 直接用助教的 code ， 過 Simple baseline。 </p>
+          </section>
+          <section>
+            <p> Result </p>
+            <pre><code data-trim>
+mtls0_sx200: "can't o' this taut paw earn the peaches "
+mnjm0_sx140: "call o' raw saw on valley this true "
+mwbt0_si2183: "books a o' o' schnooks "
+              </code></pre>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h2> Our decoding algorithm </h2>
+            <ul>
+              <li class="fragment"> Want: 最後的句子的 phoneme sequence 和原來的 phoneme sequence 盡量一樣。</li>
+              <li class="fragment"> Want: 句子不要太怪。 </li>
+            </ul>
+          </section>
+          <section>
+            <ul>
+              <li class="fragment"> Use Dynamic Programming technique </li>
+              <li class="fragment"> Choose a good cost function! </li>
+            </ul>
+            <div class="fragment" style="margin: 20px">
+              \[ f(w, v) = \mathop{\mathcal{E}}(w, v) + \alpha \log( \beta \mathop{\mathcal{F}}(w) + \gamma ) + \delta \] 
+            </div>
+
+            <div class="fragment" style="margin: 20px">
+              \[ f'(w, v) = \mathop{\mathcal{E}}(w, v) + \alpha \log( \beta \mathop{\mathcal{L}}(w)
+              \mathop{\mathcal{F}}(w) + \gamma + \theta \mathop{\mathcal{L}}(w) ) + \delta \]
+            </div>
+          </section>
+          <section>
+            <pre><code data-trim class="python" style="font-size: 18px">
+def calc(a):
+    len_ = len(a)
+    dp = [0] + [10**9] * (len_)
+    bk = [None] * (len_ + 1)
+    for i in range(1, len_+1):
+        for j in range(i):
+            for wd, rep in dict.items():
+                dis = (edit_distance(a[j:i], rep)
+                      - alpha * np.log(len(wd)*(counter[wd]+len(wd)+1))
+                      + delta
+                      )
+                if dp[j] + dis < dp[i]:
+                    dp[i] = dp[j] + dis
+                    bk[i] = (j, wd)
+    pos = len_
+    ans = []
+    while pos:
+        ans = bk[pos][1].split(' ') + ans
+        if len(bk[pos][1].split(' ')) > 1:
+            print(bk[pos][1])
+        pos = bk[pos][0]
+    return (ans, dp[-1]/len_)
+              </code></pre>
+          </section>
+        </section>
+
+        <section>
+          <h2> Summary </h2>
+          <table>
+            <tr><td> Method </td><td> Err </td></tr>
+            <tr><td> WFST </td><td> 6.52 </td></tr>
+            <tr><td> WFST 1000-best + Word2Vec LM </td><td> 6.92 </td></tr>
+            <tr><td> Our decoding algorithm </td><td> 5.66 </td></tr>
+            <tr><td> Our decoding algorithm + Guess the best </td><td> 5.23 </td></tr>
+            <tr><td> Our decoding algorithm after fine tuning + Guess the best</td><td> 5.17 </td></tr>
+          </table>
+        </section>
+      </div>
+    </div>
+
+    <script src="lib/js/head.min.js"></script>
+    <script src="js/reveal.js"></script>
+    <script src="bower_components/paper/dist/paper-full.js"></script>
+
+    <script>
+
+      // Full list of configuration options available at:
+        // https://github.com/hakimel/reveal.js#configuration
+      Reveal.initialize({
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+
+        transition: 'slide', // none/fade/slide/convex/concave/zoom
+
+        // Optional reveal.js plugins
+        dependencies: [
+          { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+          { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+          { src: 'plugin/highlight/highlight.js', async: true, condition: function() { return !!document.querySelector( 'pre code' ); }, callback: function() { hljs.initHighlightingOnLoad(); } },
+          { src: 'plugin/zoom-js/zoom.js', async: true },
+          { src: 'plugin/notes/notes.js', async: true },
+          { src: 'plugin/math/math.js', async: true }
+        ]
+      });
+
+      Reveal.configure({
+        keyboard: {
+          82: function() {MathJax.Hub.Rerender();}
+        }
+      })
+
+      Reveal.addEventListener( 'slidechanged', function( event ) {
+        setTimeout( function() {
+          MathJax.Hub.Rerender(event.currentSlide);
+        }, 150);
+      });
+    </script>
+
+    <script type="text/x-mathjax-config">
+      MathJax.Hub.Config({
+        "HTML-CSS": {
+          scale: 80
+        }
+      });
+    </script>
+    <style>
+      .reveal .controls div.slide-number {
+        width: 25px;
+        left: 27px;
+        top: 33px;
+        text-align: center;
+        vertical-align: middle;
+        font-size: .5em;
+        font-weight: bold;
+        opacity: .5;
+      }
+    </style>
+    <script>
+      function currentSlideNumber(event) {
+        var formattedStr;
+          if (event.indexh === 0) {
+            return '';
+          }
+          formattedStr = event.indexh;
+          if (event.indexv) {
+            formattedStr += '/' + event.indexv;
+          }
+          return formattedStr;
+      }
+   // fires on slide change
+         Reveal.addEventListener('slidechanged', function(event) {
+           document.querySelector('.slide-number').innerText = currentSlideNumber(event);
+         });
+         //
+         var slideNumberDiv = document.createElement('div');
+         slideNumberDiv.classList.add('slide-number');
+         document.querySelector('.controls').appendChild(slideNumberDiv);
+    </script>
+  </body>
+</html>

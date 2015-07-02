@@ -1,0 +1,18 @@
+digraph finite_state_machine {
+    bgcolor="#00000000";
+	rankdir=LR;
+	size="8,5"
+	node [shape = doublecircle] v7 v6; 
+	node [shape = circle];
+    v0 [fillcolor="yellow" style=filled];
+    v0 -> v1 [ label = "a" ];
+    v1 -> v2 [ label = "b" ];
+    v2 -> v3 [label="c"];
+    v3 -> v4 [label="b"];
+    v4 -> v6 [label="c"];
+    v0 -> v5 [label="b"];
+    v5 -> v7 [label="c"];
+    v0 -> v7 [label="c"];
+    v7 -> v4 [label="b"];
+} 
+

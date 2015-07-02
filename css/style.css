@@ -1,0 +1,142 @@
+
+.reveal pre code {
+  font-family: "Source Code Pro", monospace;
+  font-size: 140%;
+  line-height: 120%;
+  max-height: 500px;
+}
+
+.reveal {
+  font-size: 32px;
+  font-family: "Source Han Sans TW", "Source Han Sans TC", "思源黑體", "cwTex Q hei", 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif;
+}
+
+.reveal .MathJax {
+  font-size: 15px;
+}
+
+
+div.def {
+  width: 89%;
+  margin: 10px auto;
+  padding: 10px 15px;
+  border-radius: 10px;
+  background-color: #80FF80;
+  text-align: left;
+}
+
+div.def::before {
+  font-family: "cwTex Q Yuan";
+  content: '定義';
+  margin-right: 24px;
+  color: white;
+  background-color: green;
+  padding: 0px 4px;
+  border-radius: 4px;
+}
+
+div.thm {
+  width: 89%;
+  margin: 10px auto;
+  padding: 10px 15px;
+  border-radius: 10px;
+  background-color: #FF9999;
+  text-align: left;
+}
+
+div.thm::before {
+  font-family: "cwTex Q Yuan";
+  content: '定理';
+  margin-right: 24px;
+  color: white;
+  background-color: red;
+  padding: 0px 4px;
+  border-radius: 4px;
+}
+
+div.ques {
+  margin: 10px auto;
+  padding: 10px 15px;
+  border-radius: 10px;
+  background-color: #FFFF99;
+  text-align: left;
+}
+
+div.prob {
+  margin: 10px auto;
+  padding: 10px 15px;
+  border-radius: 10px;
+  background-color: #94FFFF;
+  text-align: left;
+}
+
+div.prob::before {
+  font-family: "cwTex Q Yuan";
+  content: '例題';
+  margin-right: 24px;
+  color: white;
+  background-color: blue;
+  padding: 0px 4px;
+  border-radius: 4px;
+}
+
+div.quick {
+  width: 89%;
+  margin: 10px auto;
+  padding: 10px 15px;
+  border-radius: 10px;
+  background-color: #CCCCCC;
+  text-align: left;
+}
+
+div.quick::before {
+  font-family: "cwTex Q Yuan";
+  content: '快問快答';
+  margin-right: 24px;
+  color: white;
+  background-color: #555555;
+  padding: 0px 4px;
+  border-radius: 4px;
+}
+
+div.prob a {
+  font-size: 75%;
+}
+div.prob a::before {
+  content: '-';
+}
+
+.prob hr {
+  border-color: #000072;
+}
+
+div.flex-row {
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  align-items: center;
+}
+
+div.inline {
+  display: inline-block;
+  width: 50%;
+}
+.reveal ul {
+  width: 70%;
+}
+
+.reveal .block {
+  display: flex;
+  width: 100px;
+  min-height: 100px;
+  border: 2px solid black;
+  border-radius: 4px;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+}
+#diag {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+}
